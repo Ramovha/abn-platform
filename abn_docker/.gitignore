@@ -1,0 +1,14 @@
+*.log
+*.sql
+*.sql.gz
+*.pyc
+__pycache__/
+.env
+.env.local
+sites/abn.localhost/
+sites/assets/
+sites/*.txt
+node_modules/
+env/
+.DS_Store
+frappe_docker/
