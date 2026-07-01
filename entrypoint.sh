@@ -13,11 +13,30 @@ else
   SITE_NAME="abn.localhost"
 fi
 
+# Detect if running on Railway by checking for MySQL environment variables
+if [ -n "$MYSQL_HOST" ]; then
+  echo "Detected Railway MySQL environment"
+  DB_HOST="${MYSQL_HOST}"
+  DB_PORT="${MYSQL_PORT:-3306}"
+  DB_NAME="${MYSQL_DB:-frappe}"
+  DB_USER="${MYSQL_USER:-root}"
+  DB_PASS="${MYSQL_PASSWORD:-}"
+else
+  echo "Using local database (docker-compose)"
+  DB_HOST="db"
+  DB_PORT="3306"
+  DB_NAME="frappe"
+  DB_USER="root"
+  DB_PASS="admin"
+fi
+
+echo "Database: $DB_HOST:$DB_PORT"
+
 # Create site if it doesn't exist
 SITE_DIR="sites/$SITE_NAME"
 if [ ! -f "$SITE_DIR/site_config.json" ]; then
   echo "Creating site $SITE_NAME..."
-  bench new-site --mariadb-root-username=root --mariadb-root-password=admin --admin-password=admin --install-app erpnext --set-default "$SITE_NAME"
+  bench new-site --mariadb-root-username="$DB_USER" --mariadb-root-password="$DB_PASS" --admin-password=admin --install-app erpnext --set-default "$SITE_NAME"
 else
   echo "Site $SITE_NAME already exists"
 fi
