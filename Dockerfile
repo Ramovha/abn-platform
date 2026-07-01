@@ -7,4 +7,4 @@ WORKDIR /home/frappe/frappe-bench
 
 EXPOSE 8000 8080 9000
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
