@@ -53,8 +53,14 @@ if [ ! -f "$SITE_DIR/site_config.json" ]; then
   echo "Creating site $SITE_NAME..."
   bench new-site --mariadb-root-username="$DB_USER" --mariadb-root-password="$DB_PASS" --admin-password=admin --install-app erpnext --set-default "$SITE_NAME"
 else
-  echo "Site $SITE_NAME already exists, updating configuration..."
-  cat > "$SITE_DIR/site_config.json" <<EOF
+  # Check if config has broken/old values and fix them
+  if grep -q '\${' "$SITE_DIR/site_config.json"; then
+    echo "Detected broken configuration, cleaning and recreating site..."
+    rm -rf "$SITE_DIR"
+    bench new-site --mariadb-root-username="$DB_USER" --mariadb-root-password="$DB_PASS" --admin-password=admin --install-app erpnext --set-default "$SITE_NAME"
+  else
+    echo "Site $SITE_NAME already exists, updating configuration..."
+    cat > "$SITE_DIR/site_config.json" <<EOF
 {
   "db_type": "mariadb",
   "db_host": "$DB_HOST",
@@ -64,6 +70,7 @@ else
   "db_password": "$DB_PASS"
 }
 EOF
+  fi
 fi
 
 # Set up environment for Nginx
