@@ -14,13 +14,13 @@ else
 fi
 
 # Detect if running on Railway by checking for MySQL environment variables
-if [ -n "$MYSQL_HOST" ]; then
+if [ -n "$MYSQLHOST" ]; then
   echo "Detected Railway MySQL environment"
-  DB_HOST="${MYSQL_HOST}"
-  DB_PORT="${MYSQL_PORT:-3306}"
-  DB_NAME="${MYSQL_DB:-frappe}"
-  DB_USER="${MYSQL_USER:-root}"
-  DB_PASS="${MYSQL_PASSWORD:-}"
+  DB_HOST="${MYSQLHOST}"
+  DB_PORT="${MYSQLPORT:-3306}"
+  DB_NAME="${MYSQLDATABASE:-railway}"
+  DB_USER="${MYSQLUSER:-root}"
+  DB_PASS="${MYSQLPASSWORD:-}"
 else
   echo "Using local database (docker-compose)"
   DB_HOST="db"
