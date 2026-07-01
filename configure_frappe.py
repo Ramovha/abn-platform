@@ -8,15 +8,16 @@ print("=" * 60)
 print("FRAPPE CONFIGURATION DEBUG")
 print("=" * 60)
 
-# Print all RAILWAY and MYSQL environment variables
-print("\nEnvironment Variables:")
+# Print ALL environment variables
+print("\nALL Environment Variables:")
 for key in sorted(os.environ.keys()):
-    if 'RAILWAY' in key or 'MYSQL' in key or 'DB' in key:
-        value = os.environ[key]
-        # Mask passwords
-        if 'PASSWORD' in key or 'PASS' in key:
-            value = '***MASKED***'
-        print(f"  {key}={value}")
+    value = os.environ[key]
+    # Mask passwords and long values
+    if 'PASSWORD' in key or 'PASS' in key or 'TOKEN' in key:
+        value = '***MASKED***'
+    elif len(value) > 100:
+        value = value[:100] + '...'
+    print(f"  {key}={value}")
 
 print("\n" + "=" * 60)
 
