@@ -7,4 +7,6 @@ WORKDIR /home/frappe/frappe-bench
 
 EXPOSE 8000 8080 9000
 
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+ENV FRAPPE_SITE_NAME_HEADER=abn.localhost
+
+ENTRYPOINT ["bash", "/entrypoint.sh"]
