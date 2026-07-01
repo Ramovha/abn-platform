@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Source the Frappe environment
+source /home/frappe/.bashrc || true
+cd /home/frappe/frappe-bench
+
 echo "Starting Frappe application..."
 
 # Set up environment
@@ -9,16 +13,13 @@ export BACKEND=${BACKEND:-0.0.0.0:8000}
 export SOCKETIO=${SOCKETIO:-0.0.0.0:9000}
 
 # Start Gunicorn backend in background
-echo "Starting Gunicorn backend..."
-gunicorn \
-  --bind 0.0.0.0:8000 \
-  --workers 4 \
-  --threads 2 \
-  --worker-class gthread \
-  --timeout 120 \
-  frappe.wsgi:application &
+echo "Starting Gunicorn backend on 0.0.0.0:8000..."
+bench serve --port 8000 &
 
-GUNICORN_PID=$!
+BACKEND_PID=$!
+
+# Give backend time to start
+sleep 3
 
 # Start Nginx frontend
 echo "Starting Nginx frontend..."
