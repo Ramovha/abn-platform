@@ -6,8 +6,10 @@ cd /home/frappe/frappe-bench
 
 echo "Starting Frappe application..."
 
-# Determine site name - use Railway domain if available, otherwise localhost
-if [ -n "$RAILWAY_DOMAIN" ]; then
+# Determine site name - use Railway public domain if available, otherwise localhost
+if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+  SITE_NAME="$RAILWAY_PUBLIC_DOMAIN"
+elif [ -n "$RAILWAY_DOMAIN" ]; then
   SITE_NAME="$RAILWAY_DOMAIN"
 else
   SITE_NAME="abn.localhost"
@@ -36,7 +38,7 @@ echo "Database: $DB_HOST:$DB_PORT"
 echo "Creating common_site_config.json..."
 cat > sites/common_site_config.json <<EOF
 {
-  "db_type": "mysql",
+  "db_type": "mariadb",
   "db_host": "$DB_HOST",
   "db_port": $DB_PORT,
   "db_name": "$DB_NAME",
@@ -54,7 +56,7 @@ else
   echo "Site $SITE_NAME already exists, updating configuration..."
   cat > "$SITE_DIR/site_config.json" <<EOF
 {
-  "db_type": "mysql",
+  "db_type": "mariadb",
   "db_host": "$DB_HOST",
   "db_port": $DB_PORT,
   "db_name": "$DB_NAME",
