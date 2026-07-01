@@ -32,13 +32,36 @@ fi
 
 echo "Database: $DB_HOST:$DB_PORT"
 
+# Create common_site_config.json with database configuration
+echo "Creating common_site_config.json..."
+cat > sites/common_site_config.json <<EOF
+{
+  "db_type": "mysql",
+  "db_host": "$DB_HOST",
+  "db_port": $DB_PORT,
+  "db_name": "$DB_NAME",
+  "db_user": "$DB_USER",
+  "db_password": "$DB_PASS"
+}
+EOF
+
 # Create site if it doesn't exist
 SITE_DIR="sites/$SITE_NAME"
 if [ ! -f "$SITE_DIR/site_config.json" ]; then
   echo "Creating site $SITE_NAME..."
   bench new-site --mariadb-root-username="$DB_USER" --mariadb-root-password="$DB_PASS" --admin-password=admin --install-app erpnext --set-default "$SITE_NAME"
 else
-  echo "Site $SITE_NAME already exists"
+  echo "Site $SITE_NAME already exists, updating configuration..."
+  cat > "$SITE_DIR/site_config.json" <<EOF
+{
+  "db_type": "mysql",
+  "db_host": "$DB_HOST",
+  "db_port": $DB_PORT,
+  "db_name": "$DB_NAME",
+  "db_user": "$DB_USER",
+  "db_password": "$DB_PASS"
+}
+EOF
 fi
 
 # Set up environment for Nginx
