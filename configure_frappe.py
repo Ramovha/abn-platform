@@ -4,6 +4,22 @@ import json
 import sys
 import shutil
 
+print("=" * 60)
+print("FRAPPE CONFIGURATION DEBUG")
+print("=" * 60)
+
+# Print all RAILWAY and MYSQL environment variables
+print("\nEnvironment Variables:")
+for key in sorted(os.environ.keys()):
+    if 'RAILWAY' in key or 'MYSQL' in key or 'DB' in key:
+        value = os.environ[key]
+        # Mask passwords
+        if 'PASSWORD' in key or 'PASS' in key:
+            value = '***MASKED***'
+        print(f"  {key}={value}")
+
+print("\n" + "=" * 60)
+
 # Determine site name
 site_name = os.environ.get('RAILWAY_PUBLIC_DOMAIN') or os.environ.get('RAILWAY_DOMAIN') or 'abn.localhost'
 
@@ -21,7 +37,7 @@ if mysqlhost and '${' not in mysqlhost:
         'db_user': os.environ.get('MYSQLUSER', 'root'),
         'db_password': os.environ.get('MYSQLPASSWORD', ''),
     }
-    print(f"Using Railway MySQL (via individual vars): {db_config['db_host']}:{db_config['db_port']}")
+    print(f"✓ Using Railway MySQL (via individual vars): {db_config['db_host']}:{db_config['db_port']}")
 
 # Fallback: try to parse MYSQL_URL
 if not db_config:
@@ -39,9 +55,9 @@ if not db_config:
                 'db_user': parsed.username or 'root',
                 'db_password': parsed.password or '',
             }
-            print(f"Using Railway MySQL (via URL): {db_config['db_host']}:{db_config['db_port']}")
+            print(f"✓ Using Railway MySQL (via URL): {db_config['db_host']}:{db_config['db_port']}")
         except Exception as e:
-            print(f"Failed to parse MYSQL_URL: {e}")
+            print(f"✗ Failed to parse MYSQL_URL: {e}")
 
 # Final fallback: local database
 if not db_config:
@@ -53,7 +69,9 @@ if not db_config:
         'db_user': 'root',
         'db_password': 'admin',
     }
-    print(f"Using local database (docker-compose): {db_config['db_host']}:{db_config['db_port']}")
+    print(f"⚠ Using local database (docker-compose): {db_config['db_host']}:{db_config['db_port']}")
+    print(f"⚠ WARNING: No Railway MySQL variables detected!")
+    print(f"⚠ To fix: In Railway, ensure MySQL addon is linked to this app service")
 
 # Create sites directory
 os.makedirs('sites', exist_ok=True)
